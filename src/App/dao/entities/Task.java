@@ -1,94 +1,127 @@
 package App.dao.entities;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 
-import java.text.SimpleDateFormat;
-
+/**
+ * Entity representing a project task.
+ * Implements the GoF Builder pattern to eliminate the telescoping constructor smell.
+ */
 public class Task {
 
-    private SimpleStringProperty TaskName;
-    private SimpleStringProperty TaskTime;
-    private SimpleStringProperty TaskStartDate;
-    private SimpleStringProperty TaskEndDate;
-    private SimpleStringProperty TaskProgress;
-    private SimpleStringProperty TaskColor;
-    private SimpleStringProperty TaskDependency;
-    private SimpleStringProperty TaskAssinged;
+    private final SimpleStringProperty taskName;
+    private final SimpleStringProperty taskTime;
+    private final SimpleStringProperty taskStartDate;
+    private final SimpleStringProperty taskEndDate;
+    private final SimpleStringProperty taskProgress;
+    private final SimpleStringProperty taskColor;
+    private final SimpleStringProperty taskDependency;
+    private final SimpleStringProperty taskAssigned;
 
-    public Task(String taskName, String taskTime, String taskStartDate, String taskEndDate, String taskProgress, String taskColor, String taskDependency, String taskAssinged) {
-        TaskName = new SimpleStringProperty(taskName);
-        TaskTime = new SimpleStringProperty(taskTime);
-        TaskStartDate = new SimpleStringProperty(taskStartDate);
-        TaskEndDate = new SimpleStringProperty(taskEndDate);
-        TaskProgress = new SimpleStringProperty(taskProgress);
-        TaskColor = new SimpleStringProperty(taskColor);
-        TaskDependency = new SimpleStringProperty(taskDependency);
-        TaskAssinged = new SimpleStringProperty(taskAssinged);
+    private Task(Builder builder) {
+        this.taskName = new SimpleStringProperty(builder.taskName);
+        this.taskTime = new SimpleStringProperty(builder.taskTime);
+        this.taskStartDate = new SimpleStringProperty(builder.taskStartDate);
+        this.taskEndDate = new SimpleStringProperty(builder.taskEndDate);
+        this.taskProgress = new SimpleStringProperty(builder.taskProgress);
+        this.taskColor = new SimpleStringProperty(builder.taskColor);
+        this.taskDependency = new SimpleStringProperty(builder.taskDependency);
+        this.taskAssigned = new SimpleStringProperty(builder.taskAssigned);
     }
 
     public String getTaskName() {
-        return TaskName.get();
-    }
-
-    public void setTaskName(String taskName) {
-        TaskName = new SimpleStringProperty(taskName);
+        return taskName.get();
     }
 
     public String getTaskTime() {
-        return TaskTime.get();
-    }
-
-    public void setTaskTime(String taskTime) {
-        TaskTime = new SimpleStringProperty(taskTime);
+        return taskTime.get();
     }
 
     public String getTaskStartDate() {
-        return TaskStartDate.get();
-    }
-
-    public void setTaskStartDate(String taskStartDate) {
-        TaskStartDate = new SimpleStringProperty(taskStartDate);
+        return taskStartDate.get();
     }
 
     public String getTaskEndDate() {
-        return TaskEndDate.get();
-    }
-
-    public void setTaskEndDate(String taskEndDate) {
-        TaskEndDate = new SimpleStringProperty(taskEndDate);
+        return taskEndDate.get();
     }
 
     public String getTaskProgress() {
-        return TaskProgress.get();
+        return taskProgress.get();
     }
 
     public void setTaskProgress(String taskProgress) {
-        this.TaskProgress = new SimpleStringProperty(taskProgress);
+        this.taskProgress.set(taskProgress);
     }
 
     public String getTaskColor() {
-        return TaskColor.get();
-    }
-
-    public void setTaskColor(String taskColor) {
-        TaskColor = new SimpleStringProperty(taskColor);
+        return taskColor.get();
     }
 
     public String getTaskDependency() {
-        return TaskDependency.get();
+        return taskDependency.get();
     }
 
-    public void setTaskDependency(String taskDependency) {
-        TaskDependency = new SimpleStringProperty(taskDependency);
+    public String getTaskAssigned() {
+        return taskAssigned.get();
     }
 
     public String getTaskAssinged() {
-        return TaskAssinged.get();
+        return taskAssigned.get();
     }
 
-    public void setTaskAssinged(String taskAssinged) {
-        TaskAssinged = new SimpleStringProperty(taskAssinged);
+    public static class Builder {
+        private String taskName;
+        private String taskTime = "0";
+        private String taskStartDate = "";
+        private String taskEndDate = "";
+        private String taskProgress = "0";
+        private String taskColor = "#000000";
+        private String taskDependency = "";
+        private String taskAssigned = "";
+
+        public Builder(String taskName) {
+            this.taskName = taskName;
+        }
+
+        public Builder taskTime(String taskTime) {
+            this.taskTime = taskTime;
+            return this;
+        }
+
+        public Builder taskStartDate(String taskStartDate) {
+            this.taskStartDate = taskStartDate;
+            return this;
+        }
+
+        public Builder taskEndDate(String taskEndDate) {
+            this.taskEndDate = taskEndDate;
+            return this;
+        }
+
+        public Builder taskProgress(String taskProgress) {
+            this.taskProgress = taskProgress;
+            return this;
+        }
+
+        public Builder taskColor(String taskColor) {
+            this.taskColor = taskColor;
+            return this;
+        }
+
+        public Builder taskDependency(String taskDependency) {
+            this.taskDependency = taskDependency;
+            return this;
+        }
+
+        public Builder taskAssigned(String taskAssigned) {
+            this.taskAssigned = taskAssigned;
+            return this;
+        }
+
+        public Task build() {
+            if (taskName == null || taskName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Task name cannot be empty.");
+            }
+            return new Task(this);
+        }
     }
 }
