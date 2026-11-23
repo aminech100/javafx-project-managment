@@ -14,6 +14,8 @@ import App.dao.entities.Task;
 import App.chart.DateAxis;
 import App.chart.GanttChartController;
 import App.chart.GanttChartController.ExtraData;
+import App.patterns.observer.Observer;
+import App.patterns.observer.ProjectSubject;
 import com.jfoenix.controls.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,7 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
-public class ProjectDetailController implements Initializable {
+public class ProjectDetailController implements Initializable, Observer {
 
     public TableView<Task> tableview;
     public TableColumn<Task,String> TaskName;
@@ -341,17 +343,16 @@ public class ProjectDetailController implements Initializable {
         Task task = tableview.getSelectionModel().getSelectedItem();
         task.setTaskProgress(taskStringCellEditEvent.getNewValue());
 
-        SingletonConnexionDB singletonConnexionDB =new SingletonConnexionDB();
-        Connection connection= singletonConnexionDB.getConnection();
+        String sql = "UPDATE project_task SET progress = ? WHERE task_name = ?";
+        try (Connection connection = new SingletonConnexionDB().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, task.getTaskProgress());
+            ps.setString(2, task.getTaskName());
+            ps.executeUpdate();
+        }
 
-        String sql = "UPDATE project_task SET progress= '"+task.getTaskProgress()+"' WHERE task_name='"+task.getTaskName()+"'";
-
-        Statement statement = connection.createStatement();
-
-        statement.executeUpdate(sql);
-
-        statement.close();
-        connection.close();
+        // Notify observers in the GoF Observer pattern
+        ProjectSubject.getInstance().notifyObservers("TASK_UPDATED", task);
     }
 
     //CLient Choicebox
@@ -416,6 +417,7 @@ public class ProjectDetailController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ProjectSubject.getInstance().attach(this);
 
         TaskName.setCellValueFactory(new PropertyValueFactory<>("TaskName"));
         TaskTime.setCellValueFactory(new PropertyValueFactory<>("TaskTime"));
@@ -461,17 +463,18 @@ public class ProjectDetailController implements Initializable {
     public void DeleteTaskHandle(ActionEvent event) throws SQLException {
         if(event.getSource() == DeleteTaskButton) {
 
-            SingletonConnexionDB singletonConnexionDB =new SingletonConnexionDB();
-            Connection connection= singletonConnexionDB.getConnection();
-
             Task selectedItem = tableview.getSelectionModel().getSelectedItem();
             tableview.getItems().remove(selectedItem);
 
-            PreparedStatement st = connection.prepareStatement("DELETE FROM project_task WHERE task_name = '" + selectedItem.getTaskName() + "';");
-            st.executeUpdate();
+            String deleteSql = "DELETE FROM project_task WHERE task_name = ?";
+            try (Connection connection = new SingletonConnexionDB().getConnection();
+                 PreparedStatement st = connection.prepareStatement(deleteSql)) {
+                st.setString(1, selectedItem.getTaskName());
+                st.executeUpdate();
+            }
 
-            st.close();
-            connection.close();
+            // Notify observers in the GoF Observer pattern
+            ProjectSubject.getInstance().notifyObservers("TASK_DELETED", selectedItem);
         }
     }
 
@@ -700,5 +703,13 @@ public class ProjectDetailController implements Initializable {
             DeleteTaskButton.setDisable(true);
             btnProjectDetail.setDisable(true);
             tableview.setEditable(false);
+    }
+
+
+    @Override
+    public void update(String eventType, Object data) {
+        if ("TASK_UPDATED".equals(eventType) || "TASK_DELETED".equals(eventType) || "TASK_ADDED".equals(eventType)) {
+            System.out.println("ProjectDetailController notified of event: " + eventType);
+        }
     }
 }
