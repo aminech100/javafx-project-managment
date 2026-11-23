@@ -1,6 +1,13 @@
 package App.dao.entities;
 
-public class Task {
+import App.models.composite.ProjectItem;
+
+/**
+ * Entity representing a project task.
+ * Acts as a Leaf in the GoF Composite pattern.
+ * Implements clean Java POJO encapsulation with the GoF Builder pattern.
+ */
+public class Task implements ProjectItem {
     private String taskName;
     private String taskTime;
     private String taskStartDate;
@@ -9,6 +16,9 @@ public class Task {
     private String taskColor;
     private String taskDependency;
     private String taskAssigned;
+
+    public Task() {
+    }
 
     private Task(Builder builder) {
         this.taskName = builder.taskName;
@@ -20,6 +30,43 @@ public class Task {
         this.taskDependency = builder.taskDependency;
         this.taskAssigned = builder.taskAssigned;
     }
+
+    // --- ProjectItem (Composite Leaf implementation) ---
+
+    @Override
+    public String getTitle() {
+        return getTaskName();
+    }
+
+    @Override
+    public int getDuration() {
+        if (taskTime == null || taskTime.trim().isEmpty()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(taskTime.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    @Override
+    public double getProgress() {
+        if (taskProgress == null || taskProgress.trim().isEmpty()) {
+            return 0.0;
+        }
+        try {
+            return Double.parseDouble(taskProgress.trim());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public void print(String indent) {
+        System.out.println(indent + "- [Task] " + getTitle() + " (Duration: " + getDuration() + "h, Progress: " + getProgress() + "%)");
+    }
+
 
     public String getTaskName() { return taskName; }
     public String getTaskTime() { return taskTime; }
@@ -40,6 +87,7 @@ public class Task {
     public void setTaskDependency(String taskDependency) { this.taskDependency = taskDependency; }
     public void setTaskAssigned(String taskAssigned) { this.taskAssigned = taskAssigned; }
     public void setTaskAssinged(String taskAssinged) { this.taskAssigned = taskAssinged; }
+
 
     public static class Builder {
         private String taskName;
