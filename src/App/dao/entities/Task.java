@@ -1,72 +1,45 @@
 package App.dao.entities;
 
-import javafx.beans.property.SimpleStringProperty;
-
-/**
- * Entity representing a project task.
- * Implements the GoF Builder pattern to eliminate the telescoping constructor smell.
- */
 public class Task {
-
-    private final SimpleStringProperty taskName;
-    private final SimpleStringProperty taskTime;
-    private final SimpleStringProperty taskStartDate;
-    private final SimpleStringProperty taskEndDate;
-    private final SimpleStringProperty taskProgress;
-    private final SimpleStringProperty taskColor;
-    private final SimpleStringProperty taskDependency;
-    private final SimpleStringProperty taskAssigned;
+    private String taskName;
+    private String taskTime;
+    private String taskStartDate;
+    private String taskEndDate;
+    private String taskProgress;
+    private String taskColor;
+    private String taskDependency;
+    private String taskAssigned;
 
     private Task(Builder builder) {
-        this.taskName = new SimpleStringProperty(builder.taskName);
-        this.taskTime = new SimpleStringProperty(builder.taskTime);
-        this.taskStartDate = new SimpleStringProperty(builder.taskStartDate);
-        this.taskEndDate = new SimpleStringProperty(builder.taskEndDate);
-        this.taskProgress = new SimpleStringProperty(builder.taskProgress);
-        this.taskColor = new SimpleStringProperty(builder.taskColor);
-        this.taskDependency = new SimpleStringProperty(builder.taskDependency);
-        this.taskAssigned = new SimpleStringProperty(builder.taskAssigned);
+        this.taskName = builder.taskName;
+        this.taskTime = builder.taskTime;
+        this.taskStartDate = builder.taskStartDate;
+        this.taskEndDate = builder.taskEndDate;
+        this.taskProgress = builder.taskProgress;
+        this.taskColor = builder.taskColor;
+        this.taskDependency = builder.taskDependency;
+        this.taskAssigned = builder.taskAssigned;
     }
 
-    public String getTaskName() {
-        return taskName.get();
-    }
+    public String getTaskName() { return taskName; }
+    public String getTaskTime() { return taskTime; }
+    public String getTaskStartDate() { return taskStartDate; }
+    public String getTaskEndDate() { return taskEndDate; }
+    public String getTaskProgress() { return taskProgress; }
+    public String getTaskColor() { return taskColor; }
+    public String getTaskDependency() { return taskDependency; }
+    public String getTaskAssigned() { return taskAssigned; }
+    public String getTaskAssinged() { return taskAssigned; }
 
-    public String getTaskTime() {
-        return taskTime.get();
-    }
-
-    public String getTaskStartDate() {
-        return taskStartDate.get();
-    }
-
-    public String getTaskEndDate() {
-        return taskEndDate.get();
-    }
-
-    public String getTaskProgress() {
-        return taskProgress.get();
-    }
-
-    public void setTaskProgress(String taskProgress) {
-        this.taskProgress.set(taskProgress);
-    }
-
-    public String getTaskColor() {
-        return taskColor.get();
-    }
-
-    public String getTaskDependency() {
-        return taskDependency.get();
-    }
-
-    public String getTaskAssigned() {
-        return taskAssigned.get();
-    }
-
-    public String getTaskAssinged() {
-        return taskAssigned.get();
-    }
+    public void setTaskName(String taskName) { this.taskName = taskName; }
+    public void setTaskTime(String taskTime) { this.taskTime = taskTime; }
+    public void setTaskStartDate(String taskStartDate) { this.taskStartDate = taskStartDate; }
+    public void setTaskEndDate(String taskEndDate) { this.taskEndDate = taskEndDate; }
+    public void setTaskProgress(String taskProgress) { this.taskProgress = taskProgress; }
+    public void setTaskColor(String taskColor) { this.taskColor = taskColor; }
+    public void setTaskDependency(String taskDependency) { this.taskDependency = taskDependency; }
+    public void setTaskAssigned(String taskAssigned) { this.taskAssigned = taskAssigned; }
+    public void setTaskAssinged(String taskAssinged) { this.taskAssigned = taskAssinged; }
 
     public static class Builder {
         private String taskName;
